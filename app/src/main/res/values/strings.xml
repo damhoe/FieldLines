@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Damians Feldlinienapp</string>
+    <string name="menu_Help">Help</string>
+    <string name="menu_About">About ©</string>
+    <string name="menu_NewMonopol">New Monopol</string>
+    <string name="menu_NewDipol">New Dipol</string>
+    <string name="menu_NewQuadropol">New Quadropol</string>
+    <string name="menu_Load">Load</string>
+    <string name="menu_Information">Info</string>
+
+    <string name="action_newCharge">New Charge</string>
+    <string name="label_save">Save</string>
+    <string name="label_delete">Delete</string>
+    <string name="activity_edit_charge">Edit Charges</string>
+    <string name="title_activity_save_files">SaveFilesActivity</string>
+    <string name="large_text">
+        "A vector field defines a direction at all points in space; a field line for that vector field may be constructed by tracing a path (possibly a loop) through space that follows the direction of the vector field. More precisely, the path is required to be differentiable at all interior points, and the tangent line to the path at each point is required to be parallel to the vector of the field at that point.
+
+A complete geometric description of all the field lines of a vector field is sufficient to completely specify the direction of the vector field everywhere. In order to also depict the magnitude, a selection of field lines is drawn such that the density of field lines (number of field lines per unit perpendicular area) at any location is proportional to the magnitude of the vector field at that point.
+
+As a result of the divergence theorem, field lines start at sources and end at sinks of the vector field. (A "source" is wherever the divergence of the vector field is positive, a "sink" is wherever it is negative.) In physics, drawings of field lines are mainly useful in cases where the sources and sinks, if any, have a physical meaning, as opposed to e.g. the case of a force field of a radial harmonic.
+
+For example, Gauss's law states that an electric field has sources at positive charges, sinks at negative charges, and neither elsewhere, so electric field lines start at positive charges and end at negative charges. They can also form closed loops, or extend to or from infinity, or continue forever without closing in on themselves. A gravitational field has no sources, it has sinks at masses, and it has neither elsewhere, gravitational field lines come from infinity and end at masses. A magnetic field has no sources or sinks (Gauss's law for magnetism), so its field lines have no start or end: they can only form closed loops, extend to infinity in both directions, or continue indefinitely without ever crossing itself.
+
+Note that for this kind of drawing, where the field-line density is intended to be proportional to the field magnitude, it is important to represent all three dimensions. For example, consider the electric field arising from a single, isolated point charge. The electric field lines in this case are straight lines that emanate from the charge uniformly in all directions in three-dimensional space. This means that their density is proportional to 1 / r^2, the correct result consistent with Coulomb's law for this case. However, if the electric field lines for this setup were just drawn on a two-dimensional plane, their two-dimensional density would be proportional to 1 / r, an incorrect result for this situation.
+
+Source: WIKIPEDIA"
+
+    </string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_information">InformationActivity</string>
+
+</resources>

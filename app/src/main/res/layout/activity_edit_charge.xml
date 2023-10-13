@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.damhoe.fieldlines.EditChargeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textView"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_marginBottom="17dp"
+            android:text="Create a new Charge:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="64dp"
+            tools:layout_editor_absoluteY="16dp" />
+
+        <EditText
+            android:id="@+id/edit_x"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="70dp"
+            android:layout_toEndOf="@+id/textView3"
+            android:inputType="number|numberSigned|numberDecimal"
+            android:labelFor="@+id/edit_x" />
+
+        <EditText
+            android:id="@+id/edit_y"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/edit_x"
+            android:layout_below="@+id/edit_x"
+            android:layout_marginTop="19dp"
+            android:inputType="number|numberSigned|numberDecimal" />
+
+        <EditText
+            android:id="@+id/edit_charge"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/edit_y"
+            android:layout_below="@+id/edit_y"
+            android:layout_marginTop="17dp"
+            android:inputType="number|numberSigned|numberDecimal" />
+
+        <Button
+            android:id="@+id/buttonSave"
+            style="@style/MyActionBar"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:layout_alignStart="@+id/buttonDelete"
+            android:layout_below="@+id/edit_charge"
+            android:layout_marginTop="32dp"
+            android:text="@string/label_save"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/buttonDelete"
+            style="@style/MyActionBar"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/buttonSave"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="27dp"
+            android:text="@string/label_delete"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/edit_x"
+            android:layout_alignBottom="@+id/edit_x"
+            android:layout_alignStart="@+id/textView2"
+            android:text="X:"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/edit_y"
+            android:layout_alignBottom="@+id/edit_y"
+            android:layout_alignEnd="@+id/textView3"
+            android:text="Y:"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/edit_charge"
+            android:layout_alignBottom="@+id/edit_charge"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="68dp"
+            android:text="Amount:"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

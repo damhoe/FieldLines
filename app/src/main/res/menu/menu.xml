@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/NewMonopol" android:title="@string/menu_NewMonopol"/>
+    <item android:id="@+id/NewDipol" android:title="@string/menu_NewDipol"/>
+    <item android:id="@+id/NewQuadropol" android:title="@string/menu_NewQuadropol"/>
+
+    <item android:id="@+id/Load" android:title="@string/menu_Load"/>
+    <item android:id="@+id/Help" android:title="@string/menu_Help"/>
+    <item android:id="@+id/Information" android:title="@string/menu_Information"/>
+    <item android:id="@+id/About" android:title="@string/menu_About"/>
+
+    <item android:id="@+id/action_newCharge"
+        android:title="@string/action_newCharge"
+        android:icon="@drawable/item_plus"
+        app:showAsAction="ifRoom"/>
+
+</menu>
