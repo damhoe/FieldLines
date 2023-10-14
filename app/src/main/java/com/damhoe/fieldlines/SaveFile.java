@@ -4,11 +4,14 @@ import java.io.File;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.damhoe.fieldlines.application.Charge;
+import com.damhoe.fieldlines.application.ChargeList;
+
 import java.io.FileOutputStream;
 
 public class SaveFile {
 
-    void saveCharges(ChargeList chargeList, Context context){
+    public void saveCharges(ChargeList chargeList, Context context){
 
         String filename = "myfile";
         String string = "Hello world!";

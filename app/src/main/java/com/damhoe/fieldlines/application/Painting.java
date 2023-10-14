@@ -1,4 +1,4 @@
-package com.damhoe.fieldlines;
+package com.damhoe.fieldlines.application;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

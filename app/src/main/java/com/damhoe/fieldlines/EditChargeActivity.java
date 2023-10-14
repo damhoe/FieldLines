@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.damhoe.fieldlines.application.Charge;
+import com.damhoe.fieldlines.application.Framework;
+import com.damhoe.fieldlines.application.Physics;
 import com.example.fieldlines.R;
 
 

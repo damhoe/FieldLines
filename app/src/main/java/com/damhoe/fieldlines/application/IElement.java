@@ -1,7 +1,6 @@
-package com.damhoe.fieldlines;
-
+package com.damhoe.fieldlines.application;
 /**
- * Created by shoedtke on 09.12.2017.
+ * Created on 09.12.2017.
  */
 
 public interface IElement {

@@ -1,4 +1,4 @@
-package com.damhoe.fieldlines;
+package com.damhoe.fieldlines.application;
 
 import android.util.AttributeSet;
 import android.view.DragEvent;
@@ -11,6 +11,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.content.Context;
 import android.graphics.Path;
+
+import androidx.core.content.res.ResourcesCompat;
+
+import com.example.fieldlines.R;
 
 import java.util.ArrayList;
 
@@ -91,7 +95,7 @@ public class MyView extends View implements View.OnDragListener {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.BLACK);
+        canvas.drawColor(ResourcesCompat.getColor(getResources(), R.color.md_theme_dark_background, null));
 
         int w = getWidth();
         int h = getHeight();

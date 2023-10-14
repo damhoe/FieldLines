@@ -1,11 +1,13 @@
-package com.damhoe.fieldlines;
+package com.damhoe.fieldlines.application;
 
 import android.graphics.Point;
+
 import java.util.ArrayList;
+
 /**
  * Created by damian on 02.12.2017.
  */
-class Physics {
+public class Physics {
 
     private static final double SCALECAlC = 10;
     private static final int MAX_NUMBER_OF_START_POINTS = 30;
@@ -15,7 +17,7 @@ class Physics {
     private double Q = 10; // Probeladung
     private double resolution = 10; // Verhältnis von berechneten zu gemalten Punkten
 
-    static ChargeList charges = new ChargeList();
+    public static ChargeList charges = new ChargeList();
     static ArrayList<StartPoint> startPoints = null;
 
     void initialize() {
@@ -120,7 +122,7 @@ class Physics {
     }
 
 
-    Charge getNearCenter(double x, double y ){     //unskaliert
+    public Charge getNearCenter(double x, double y){     //unskaliert
 
         Charge center = null;
 

@@ -1,8 +1,15 @@
-package com.damhoe.fieldlines;
+package com.damhoe.fieldlines.application;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.damhoe.fieldlines.EditChargeActivity;
+import com.damhoe.fieldlines.InformationActivity;
+import com.damhoe.fieldlines.LoadActivity;
+import com.damhoe.fieldlines.MainActivity;
+import com.damhoe.fieldlines.SaveFile;
+import com.damhoe.fieldlines.application.ChargeList;
 
 /**
  * Created by damian on 07.12.2017.
@@ -38,7 +45,7 @@ public class Framework {
         context.startActivity(intent);
     }
 
-    void startMainActivity(Context context,  Bundle bundle){
+    public void startMainActivity(Context context, Bundle bundle){
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra("Information", bundle);
         context.startActivity(intent);

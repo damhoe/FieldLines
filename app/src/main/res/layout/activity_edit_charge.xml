@@ -54,7 +54,6 @@
 
         <Button
             android:id="@+id/buttonSave"
-            style="@style/MyActionBar"
             android:layout_width="250dp"
             android:layout_height="30dp"
             android:layout_alignStart="@+id/buttonDelete"
@@ -67,7 +66,6 @@
 
         <Button
             android:id="@+id/buttonDelete"
-            style="@style/MyActionBar"
             android:layout_width="250dp"
             android:layout_height="30dp"
             android:layout_below="@+id/buttonSave"

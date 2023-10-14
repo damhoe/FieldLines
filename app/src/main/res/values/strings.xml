@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Damians Feldlinienapp</string>
+    <string name="app_name">Field Lines</string>
     <string name="menu_Help">Help</string>
     <string name="menu_About">About ©</string>
     <string name="menu_NewMonopol">New Monopol</string>
@@ -29,5 +29,7 @@ Source: WIKIPEDIA"
     </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_information">InformationActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

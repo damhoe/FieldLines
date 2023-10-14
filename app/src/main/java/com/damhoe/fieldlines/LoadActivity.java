@@ -7,6 +7,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.damhoe.fieldlines.application.Element;
+import com.damhoe.fieldlines.application.IElement;
 import com.example.fieldlines.R;
 
 import java.util.ArrayList;

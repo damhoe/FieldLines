@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.damhoe.fieldlines.application.IElement;
 import com.example.fieldlines.R;
 
 import java.util.ArrayList;

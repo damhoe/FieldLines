@@ -1,14 +1,14 @@
-package com.damhoe.fieldlines;
+package com.damhoe.fieldlines.application;
 
 /**
- * Created by shoedtke on 09.12.2017.
+ * Created on 09.12.2017.
  */
 
-class Element implements IElement {
+public class Element implements IElement {
     private final String name;
     private final String value;
 
-    Element(String name, String value) {
+    public Element(String name, String value) {
         this.name = name;
         this.value = value;
     }

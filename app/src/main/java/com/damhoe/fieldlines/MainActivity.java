@@ -1,95 +1,128 @@
 package com.damhoe.fieldlines;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuProvider;
+import androidx.databinding.DataBindingUtil;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
 import com.example.fieldlines.R;
+import com.example.fieldlines.databinding.ActivityMainBinding;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends Activity {
-
-    private MyView myView;
-    private boolean onTouch = false;
-    Physics physics = new Physics();
-    Framework framework = new Framework();
+public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding binding;
+    private Map<Integer, Runnable> menuMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        setContentView(binding.getRoot());
+
+        // Setup Menu
+        initializeMenu();
+
+        // Setup navigation controller
+        NavController navController = findNavController();
+        NavigationUI.setupWithNavController(binding.toolbar, navController);
+
+        setSupportActionBar(binding.toolbar);
+
         /*if (physics.charges.isEmpty()){
             physics.initializeDipol(); // default Screen
         }*/
         //
-        if (getIntent().getExtras() != null){
-            Bundle b = getIntent().getExtras().getBundle("Information");
-
-            if (b.getInt("Action") == new Integer(1)){
-                physics.removeCharge(physics.charges.get(b.getInt("Index")));
-            }
-            else {
-                Charge charge = new Charge(new Point(b.getInt("x"), b.getInt("y")), b.getDouble("amount"));
-                physics.addCharge(charge);
-            }
-        }
+//        if (getIntent().getExtras() != null){
+//            Bundle b = getIntent().getExtras().getBundle("Information");
+//
+//            if (b.getInt("Action") == new Integer(1)){
+//                physics.removeCharge(physics.charges.get(b.getInt("Index")));
+//            }
+//            else {
+//                Charge charge = new Charge(new Point(b.getInt("x"), b.getInt("y")), b.getDouble("amount"));
+//                physics.addCharge(charge);
+//            }
+//        }
          //   physics.addCharge(new Charge(new Point(b.getInt("x"), b.getInt("y")), b.getDouble("amount")));
         //       Bundle b = getIntent().getExtras();
        // physics.addCharge(new Charge(new Point(b.getInt("x"), b.getInt("y")), b.getDouble("amount")));
-        setContentView(R.layout.activity_main);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
+    private void initializeMenu() {
+        addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem item) {
+                Runnable action = menuMap.get(item.getItemId());
+                if (action != null) {
+                    action.run();
+                }
+                return true;
+            }
+        });
+
+        initMenuMap();
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
+    private NavController findNavController() {
+        return Navigation.findNavController(this, R.id.nav_host_fragment);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Map<Integer, Runnable> menuMap = new HashMap<>();
-        menuMap.put(R.id.NewMonopol, new Runnable() {
-            @Override
-            public void run() {
-                physics.initialize();
-                physics.initializeMonopol();
-                setContentView(R.layout.activity_main);
-            }
-        });
-        menuMap.put(R.id.NewDipol, new Runnable() {
-            @Override
-            public void run() {
-                physics.initialize();
-                physics.initializeDipol();
-                setContentView(R.layout.activity_main);
-            }
-        });
-        menuMap.put(R.id.NewQuadropol, new Runnable() {
-            @Override
-            public void run() {
-                physics.initialize();
-                physics.initializeQuadropol();
-                setContentView(R.layout.activity_main);
-            }
-        });
+
+    private void initMenuMap() {
+//        menuMap.put(R.id.NewMonopol, new Runnable() {
+//            @Override
+//            public void run() {
+//                physics.initialize();
+//                physics.initializeMonopol();
+//                setContentView(binding.getRoot());
+//            }
+//        });
+//        menuMap.put(R.id.NewDipol, new Runnable() {
+//            @Override
+//            public void run() {
+//                physics.initialize();
+//                physics.initializeDipol();
+//                setContentView(binding.getRoot());
+//            }
+//        });
+//        menuMap.put(R.id.NewQuadropol, new Runnable() {
+//            @Override
+//            public void run() {
+//                physics.initialize();
+//                physics.initializeQuadropol();
+//                setContentView(binding.getRoot());
+//            }
+//        });
         menuMap.put(R.id.Help, new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(MainActivity.this, "Really? I think you don't need any help with this APP!", Toast.LENGTH_LONG).show();
-                framework.saveCharges(MainActivity.this, physics.charges);
+                //framework.saveCharges(MainActivity.this, physics.charges);
             }
         });
         menuMap.put(R.id.About, new Runnable() {
@@ -101,7 +134,7 @@ public class MainActivity extends Activity {
         menuMap.put(R.id.Load, new Runnable() {
             @Override
             public void run() {
-                framework.startLoadActivity(MainActivity.this);
+                //framework.startLoadActivity(MainActivity.this);
             }
         });
         menuMap.put(R.id.action_newCharge, new Runnable() {
@@ -118,14 +151,8 @@ public class MainActivity extends Activity {
         menuMap.put(R.id.Information, new Runnable() {
             @Override
             public void run() {
-                framework.startInformationActivity(MainActivity.this);
+                //framework.startInformationActivity(MainActivity.this);
             }
         });
-
-        Runnable action = menuMap.get(item.getItemId());
-        if (action != null) {
-            action.run();
-        }
-        return true;
     }
 }
