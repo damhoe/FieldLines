@@ -1,11 +1,11 @@
-package com.damhoe.fieldlines;
+package com.damhoe.fieldlines.application;
 
 import java.io.File;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.damhoe.fieldlines.application.Charge;
-import com.damhoe.fieldlines.application.ChargeList;
+import com.damhoe.fieldlines.domain.Charge;
+import com.damhoe.fieldlines.domain.ChargeList;
 
 import java.io.FileOutputStream;
 
@@ -38,9 +38,9 @@ public class SaveFile {
     private String getChargeStringList(ChargeList charges) {
         String chargeString = "";
         for(Charge charge: charges){
-            chargeString += Float.toString(charge.position.x);
-            chargeString += Float.toString(charge.position.y);
-            chargeString += Double.toString(charge.amount);
+            chargeString += Float.toString(charge.Position.x);
+            chargeString += Float.toString(charge.Position.y);
+            chargeString += Double.toString(charge.Amount);
         }
         String g = "Hallo";
         return g;

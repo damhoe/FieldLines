@@ -8,32 +8,100 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.damhoe.fieldlines.application.MyView
-            android:id="@+id/MyView"
+        <com.damhoe.fieldlines.ui.MainView
+            android:id="@+id/main_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button_edit_charge"
+            android:id="@+id/button_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/button_add_charge"
-            app:layout_constraintEnd_toEndOf="@id/button_add_charge"
+            app:layout_constraintBottom_toTopOf="@id/button_edit_charge"
+            app:layout_constraintEnd_toEndOf="@id/button_edit_charge"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_edit_24dp"
-            android:contentDescription="Edit charge" />
+            android:src="@drawable/ic_add_24dp"
+            android:contentDescription="Add charge" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             style="@style/Widget.App.ExtendedFloatingActionButton"
-            android:id="@+id/button_add_charge"
+            android:id="@+id/button_edit_charge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="24dp"
             android:layout_marginEnd="16dp"
-            android:text="Add charge"
-            app:icon="@drawable/ic_add_24dp"
+            android:text="Edit charge"
+            app:icon="@drawable/ic_edit_24dp"
+            android:backgroundTint="?colorSecondaryContainer"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vert_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5"
+            />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="@id/image_hold"
+            app:layout_constraintEnd_toEndOf="@id/text_hold"
+            app:layout_constraintTop_toTopOf="@id/image_hold"
+            app:layout_constraintBottom_toBottomOf="@id/image_hold"
+            android:layout_marginTop="-8dp"
+            android:layout_marginBottom="-8dp"
+            android:layout_marginStart="-8dp"
+            android:layout_marginEnd="-8dp"
+            app:cardCornerRadius="24dp"
+            android:alpha="0.8"
+            app:strokeWidth="0dp"
+            app:cardElevation="4dp"
+            />
+
+        <ImageView
+            android:id="@+id/image_hold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/text_hold"
+            app:layout_constraintBottom_toBottomOf="@id/text_hold"
+            app:layout_constraintStart_toStartOf="@id/vert_guideline"
+            app:layout_constraintEnd_toStartOf="@id/text_hold"
+            android:src="@drawable/ic_touch_24dp"
+            app:tint="?attr/colorAccent"
+            android:elevation="4dp"
+            />
+
+        <TextView
+            android:id="@+id/text_hold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Tap and hold to create new charge..."
+            app:layout_constraintEnd_toEndOf="@id/vert_guideline"
+            app:layout_constraintStart_toEndOf="@id/image_hold"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="16dp"
+            android:textColor="?attr/colorAccent"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textStyle="italic"
+            android:elevation="4dp"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_refresh_coordinates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.Button.IconButton"
+            app:icon="@drawable/ic_refresh_24dp"
+            app:iconTint="?colorAccent"
+            app:layout_constraintTop_toTopOf="@id/image_hold"
+            app:layout_constraintBottom_toBottomOf="@id/image_hold"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
-package com.damhoe.fieldlines.application;
+package com.damhoe.fieldlines.ui;
 
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.view.GestureDetector;
@@ -12,8 +13,16 @@ import android.graphics.Paint;
 import android.content.Context;
 import android.graphics.Path;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 
+import com.damhoe.fieldlines.domain.EFieldPoint;
+import com.damhoe.fieldlines.application.Physics;
+import com.damhoe.fieldlines.domain.ChargeList;
+import com.damhoe.fieldlines.domain.StartPoint;
+import com.damhoe.fieldlines.application.Transformation;
+import com.damhoe.fieldlines.application.Vector;
+import com.damhoe.fieldlines.domain.Charge;
 import com.example.fieldlines.R;
 
 import java.util.ArrayList;
@@ -22,70 +31,79 @@ import java.util.ArrayList;
 /**
  * Created by damian on 25.11.2017.
  */
-public class MyView extends View implements View.OnDragListener {
+public class MainView extends View implements View.OnDragListener {
 
-    //    private float angle=0;
+    NotifyAddChargeRequestListener listener;
 
     private static final int MINIMAL_DISTANCE = 10;
     private static final double PAINTING_SCALE = 10;
     private static final int MAX_LINE_SEGMENTS = 50000;
 
-    private Paint white = new Paint();
-    private Path path = new Path();
-    private Physics physics = new Physics();
-    private Transformation transformation = new Transformation();
-    private Framework framework = new Framework();
-
-    private ScaleGestureDetector scaleDetector;
-    private GestureDetector gestureDetector;
+    private final Paint white = new Paint();
+    private final Path path = new Path();
+    private final Transformation transformation = new Transformation();
+    private final ScaleGestureDetector scaleDetector;
+    private final GestureDetector gestureDetector;
 
     private float dx;
     private float dy;
+    ChargeList charges;
 
 
-    public MyView(final Context context, AttributeSet attrs) {
+    public MainView(final Context context, AttributeSet attrs) {
         super(context, attrs);
         scaleDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.SimpleOnScaleGestureListener(){
             @Override
-            public boolean onScale(ScaleGestureDetector detector) {
-                transformation.applayZoom(detector.getScaleFactor());
+            public boolean onScale(@NonNull ScaleGestureDetector detector) {
+                transformation.applyZoom(detector.getScaleFactor());
                 invalidate();
                 return true;
             }
         });
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
             @Override
-            public boolean onDoubleTap(MotionEvent e) {
+            public boolean onDoubleTap(@NonNull MotionEvent e) {
                 transformation.reset();
                 invalidate();
                 return true;
             }
 
             @Override
-            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                transformation.applayTranslation(distanceX, distanceY);
+            public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2, float distanceX, float distanceY) {
+                transformation.applyTranslation(distanceX, distanceY);
                 invalidate();
                 return true;
             }
 
             @Override
-            public void onLongPress(MotionEvent e) {
-               /* Intent intent = new Intent(context, EditChargeActivity.class);
-                Bundle b = new Bundle();
-                b.putFloat("x",e.getX());
-                b.putFloat("y",e.getY());
-                intent.putExtra(b); // übermitteln von Daten an neue activity
-                context.startActivity(intent);*/
-                framework.startEditChargeActivityWithCoordinates(context, transformation.getRealX(e.getX() - dx), transformation.getRealY(e.getY() - dy));
-                invalidate();
+            public void onLongPress(@NonNull MotionEvent e) {
+                Point position = new Point();
+                position.x = (int) transformation.getRealX(e.getX() - dx);
+                position.y = (int) transformation.getRealY(e.getY() - dy);
+                if (listener != null) {
+                    listener.notifyNewAddChargeRequest(position);
+                }
             }
         });
 
         setup();
     }
 
-    private void setup() {
+    public void setAddChargeRequestListener(NotifyAddChargeRequestListener listener) {
+        this.listener = listener;
+    }
 
+    public void recenter() {
+        transformation.reset();
+        invalidate();
+    }
+
+    public void setCharges(ChargeList charges) {
+        this.charges = charges;
+        invalidate();
+    }
+
+    private void setup() {
         white.setAntiAlias(true);
         white.setColor(Color.WHITE);
         white.setStyle(Paint.Style.STROKE);
@@ -109,12 +127,10 @@ public class MyView extends View implements View.OnDragListener {
         double topEdge = transformation.getRealY(-h / 2);
         double bottomEdge = transformation.getRealY(h / 2);
 
-        physics.initialize();
-        ArrayList<StartPoint> startpointList = physics.getAllStartPoints();
+        ArrayList<StartPoint> startPoints = Physics.getAllStartPoints(charges);
 
-        for (int i = 0; i < startpointList.size(); i++) {
-
-            drawCurve(startpointList.get(i), canvas, topEdge, bottomEdge, leftEdge, rightEdge);
+        for (int i = 0; i < startPoints.size(); i++) {
+            drawCurve(startPoints.get(i), canvas, topEdge, bottomEdge, leftEdge, rightEdge);
         }
 
     }
@@ -122,33 +138,33 @@ public class MyView extends View implements View.OnDragListener {
     void drawCurve (StartPoint startPoint, Canvas canvas, double top, double bottom, double left, double right){
 
         path.reset();
-        Vector startPosition = new Vector (startPoint.x, startPoint.y);
+        Vector startPosition = new Vector(startPoint.x, startPoint.y);
 
-        EFieldPoint a = physics.getPoint(startPosition);
-        EFieldPoint b = a;
+        EFieldPoint point1 = Physics.calculateEFieldPoint(charges, startPosition);
+        EFieldPoint point2 = point1;
 
-        drawSegment(a);
+        drawSegment(point1);
         paintPath(canvas);
 
         for (int n = 0; n < MAX_LINE_SEGMENTS; n++){
 
-            a = physics.getNextPoint(a, startPoint.center);
+            point1 = Physics.getNextEFieldPoint(charges, point1, startPoint.center);
 
-            if(!isNear(a, b)){
+            if(!isNear(point1, point2)){
 
-                if (!inScreen(a,top, bottom, left, right)){
+                if (!inScreen(point1,top, bottom, left, right)){
                     paintPath(canvas);
                     break;
                 }
 
-                if(a.nearCenter != null){
-                    if(a.nearCenter.index > startPoint.center.index){
+                if (point1.nearCenter != null){
+                    if (charges.indexOf(point1.nearCenter) > charges.indexOf(startPoint.center)) {
                         paintPath(canvas);
-                        break;
-                    } else {break;}
+                    }
+                    break;
                 }
-                b = a;
-                drawSegment(a);
+                point2 = point1;
+                drawSegment(point1);
             }
         }
     }
@@ -160,7 +176,6 @@ public class MyView extends View implements View.OnDragListener {
     }
 
     void drawSegment(EFieldPoint point){
-
         double fx = point.Fx;
         double fy = point.Fy;
         double x = point.x;
@@ -175,12 +190,12 @@ public class MyView extends View implements View.OnDragListener {
     }
 
     private boolean isNear(EFieldPoint a, EFieldPoint b){
-        return (getSquaredDistance(a, b) < transformation.real_Squared_LineSegment_Distance);
+        return (getSquaredDistance(a, b) < Transformation.REAL_SQUARED_LINE_SEGMENT_DISTANCE);
     }
 
-    private double getSquaredDistance(EFieldPoint a, EFieldPoint b){
-        double dx = a.x - b.x;
-        double dy = a.y - b.y;
+    private double getSquaredDistance(EFieldPoint point1, EFieldPoint point2){
+        double dx = point1.x - point2.x;
+        double dy = point1.y - point2.y;
         return( dx * dx + dy * dy);
     }
 
@@ -215,12 +230,12 @@ public class MyView extends View implements View.OnDragListener {
 
             case MotionEvent.ACTION_UP:
 
-                Charge clickedCharge = physics.getNearCenter(transformation.getRealX(X) , transformation.getRealY(Y));
+                Charge clickedCharge = Physics.getNearCenter(charges, transformation.getRealX(X) , transformation.getRealY(Y));
 
                 if (clickedCharge != null){
                     //Bundle b = new Bundle();
                     //Intent newIntent = new Intent().putExtra("key", b); // übermitteln von Daten an neue activity
-                    framework.startEditChargeActivity(getContext(), clickedCharge.index);
+                    //framework.startEditChargeActivity(getContext(), clickedCharge.index);
                     break;
                     //physics.removeCharge(clickedCharge);
                 }

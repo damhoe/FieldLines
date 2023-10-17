@@ -1,49 +1,45 @@
 package com.damhoe.fieldlines.application;
 
-import java.util.function.DoubleToIntFunction;
-
 /**
  * Created by damian on 07.12.2017.
  */
 
 public class Transformation {
-
-    static double real_Squared_LineSegment_Distance = 1;
-
-    private static final double SQUARED_PIXEL_LINESEGMENT_DISTANCE = 50;
+    public static double REAL_SQUARED_LINE_SEGMENT_DISTANCE = 1;
+    private static final double SQUARED_PIXEL_LINE_SEGMENT_DISTANCE = 50;
     private static final double DEFAULT_ZOOM = 1;
 
     static double zoom = 1;
     static double dx;
     static double dy;
 
-    float getPixelX(double x){
+    public float getPixelX(double x){
         return((float) (x * zoom + dx));
     }
 
-    float getPixelY(double y){
+    public float getPixelY(double y){
         return((float) (y * zoom + dy));
     }
 
-    double getRealX(float x){
+    public double getRealX(float x){
         return((x - dx)/zoom);
     }
 
-    double getRealY(float y){
+    public double getRealY(float y){
         return((y - dy)/zoom);
     }
 
-    void applayZoom(double zoom){
+    public void applyZoom(double zoom){
         this.zoom *= zoom;
     }
 
-    void applayTranslation(double distancX, double distanceY){
+    public void applyTranslation(double distancX, double distanceY){
         this.dx -= distancX;
         this.dy -= distanceY;
-        real_Squared_LineSegment_Distance = SQUARED_PIXEL_LINESEGMENT_DISTANCE/ (zoom * zoom);
+        REAL_SQUARED_LINE_SEGMENT_DISTANCE = SQUARED_PIXEL_LINE_SEGMENT_DISTANCE / (zoom * zoom);
     }
 
-    void reset(){
+    public void reset(){
         this.zoom = DEFAULT_ZOOM;
         this.dx = 0;
         this.dy = 0;

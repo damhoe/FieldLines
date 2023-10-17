@@ -9,6 +9,80 @@
         android:id="@+id/homeFragment"
         android:name="com.damhoe.fieldlines.ui.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            />
+        <action
+            android:id="@+id/action_homeFragment_to_helpFragment"
+            app:destination="@id/helpFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            />
+        <action
+            android:id="@+id/action_homeFragment_to_libraryFragment"
+            app:destination="@id/libraryFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popExitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            />
+        <action
+            android:id="@+id/action_homeFragment_to_editChargesFragment"
+            app:destination="@id/editChargesFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.damhoe.fieldlines.ui.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about"/>
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="com.damhoe.fieldlines.ui.HelpFragment"
+        android:label="Help"
+        tools:layout="@layout/fragment_help"
+        />
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="com.damhoe.fieldlines.ui.LibraryFragment"
+        android:label="Library"
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_libraryFragment_to_helpFragment"
+            app:destination="@id/helpFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popUpTo="@layout/fragment_home"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/editChargesFragment"
+        android:name="com.damhoe.fieldlines.ui.EditChargesFragment"
+        android:label="Edit charges"
+        tools:layout="@layout/fragment_edit_charges" >
+        <action
+            android:id="@+id/action_editChargesFragment_to_helpFragment"
+            app:destination="@id/helpFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            />
+    </fragment>
 
 </navigation>
