@@ -128,7 +128,12 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.add_single_charge) {
-            showAddSingleChargeDialog(null);
+            new ChargeAlertDialogFactory(requireContext(), new ChargeRequestListener() {
+                @Override
+                public void notifyChargeRequest(int x, int y, double amount) {
+                    viewModel.addCharge(new Charge(new Point(x, y), amount));
+                }
+            }).createAddChargeDialog().show();
         }
         else if (menuItem.getItemId() == R.id.add_monopole) {
             viewModel.initializeMonopole();
@@ -142,33 +147,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         return true;
     }
 
-    private void showAddSingleChargeDialog(@Nullable Point position) {
-
-        View layout = getLayoutInflater().inflate(R.layout.dialog_single_charge, null, false);
-        TextInputEditText editTextX = layout.findViewById(R.id.edit_x_coordinate);
-        TextInputEditText editTextY = layout.findViewById(R.id.edit_y_coordinate);
-        TextInputEditText editTextAmount = layout.findViewById(R.id.edit_amount);
-
-        if (position != null) {
-            editTextX.setText(String.valueOf(position.x));
-            editTextY.setText(String.valueOf(position.y));
-        }
-
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Add charge")
-                .setView(layout)
-                .setPositiveButton("OK", (d, i) -> {
-                    int x = Integer.parseInt(editTextX.getEditableText().toString());
-                    int y = Integer.parseInt(editTextY.getEditableText().toString());
-                    double amount = Double.parseDouble(editTextAmount.getEditableText().toString());
-                    createAndAddCharge(x, y, amount);
-                    d.dismiss();
-                })
-                .setNegativeButton("Cancel", (d, i) -> d.cancel())
-                .show();
-
-    }
-
     private void createAndAddCharge(int x, int y, double amount) {
         Charge charge = new Charge(new Point(x, y), amount);
         viewModel.addCharge(charge);
@@ -176,6 +154,11 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     @Override
     public void notifyNewAddChargeRequest(Point position) {
-        showAddSingleChargeDialog(position);
+        new ChargeAlertDialogFactory(requireContext(), new ChargeRequestListener() {
+            @Override
+            public void notifyChargeRequest(int x, int y, double amount) {
+                viewModel.addCharge(new Charge(new Point(x, y), amount));
+            }
+        }).createAddChargeDialog(position).show();
     }
 }

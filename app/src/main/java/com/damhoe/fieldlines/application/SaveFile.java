@@ -38,9 +38,9 @@ public class SaveFile {
     private String getChargeStringList(ChargeList charges) {
         String chargeString = "";
         for(Charge charge: charges){
-            chargeString += Float.toString(charge.Position.x);
-            chargeString += Float.toString(charge.Position.y);
-            chargeString += Double.toString(charge.Amount);
+            chargeString += Float.toString(charge.position.x);
+            chargeString += Float.toString(charge.position.y);
+            chargeString += Double.toString(charge.amount);
         }
         String g = "Hallo";
         return g;

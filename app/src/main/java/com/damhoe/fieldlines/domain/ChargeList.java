@@ -2,8 +2,6 @@ package com.damhoe.fieldlines.domain;
 
 import android.graphics.Point;
 
-import com.damhoe.fieldlines.domain.Charge;
-
 import java.util.ArrayList;
 
 /**
@@ -18,12 +16,20 @@ public class ChargeList extends ArrayList<Charge> {
 
         Charge currentMax = this.get(0);
         for (Charge charge: this){
-            if (Math.abs(charge.Amount) > currentMax.Amount){
+            if (Math.abs(charge.amount) > currentMax.amount){
                 currentMax = charge;
             }
         }
 
         return currentMax;
+    }
+
+    public ChargeList deepCopy() {
+        ChargeList charges = new ChargeList();
+        for (Charge charge: this) {
+            charges.add(charge.deepCopy());
+        }
+        return charges;
     }
 
     public static class Factory {

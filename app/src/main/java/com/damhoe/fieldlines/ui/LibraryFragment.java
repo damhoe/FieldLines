@@ -37,7 +37,7 @@ public class LibraryFragment extends Fragment {
                 menuInflater.inflate(R.menu.menu, menu);
                 menu.removeItem(R.id.menu_library);
                 menu.removeItem(R.id.menu_about);
-                //menu.getItem(R.id.menu_help).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.findItem(R.id.menu_help).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             }
 
             @Override
@@ -47,7 +47,7 @@ public class LibraryFragment extends Fragment {
                 }
                 return true;
             }
-        });
+        }, getViewLifecycleOwner());
 
         return binding.getRoot();
     }

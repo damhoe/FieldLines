@@ -32,7 +32,7 @@ public final class Physics {
 
     public static EFieldPoint getNextEFieldPoint(ChargeList charges, EFieldPoint a, Charge charge) {
 
-        double scale = Math.signum(charge.Amount) * SCALECAlC / Math.sqrt(a.Fx * a.Fx + a.Fy * a.Fy);
+        double scale = Math.signum(charge.amount) * SCALECAlC / Math.sqrt(a.Fx * a.Fx + a.Fy * a.Fy);
         double x = a.x + scale * a.Fx;
         double y = a.y + scale * a.Fy;
 
@@ -46,10 +46,10 @@ public final class Physics {
         Charge center = null;
 
         for (Charge charge: charges){
-            double dx = point.xValue - charge.Position.x;
-            double dy = point.yValue - charge.Position.y;
+            double dx = point.xValue - charge.position.x;
+            double dy = point.yValue - charge.position.y;
 
-            double factor = charge.Amount * Math.pow(dx * dx + dy * dy, -1.5);
+            double factor = charge.amount * Math.pow(dx * dx + dy * dy, -1.5);
             Ex += dx * factor;
             Ey += dy * factor;
 
@@ -66,12 +66,12 @@ public final class Physics {
     public static ArrayList<StartPoint> getAllStartPoints(ChargeList charges){
         ArrayList<StartPoint> startPoints = new ArrayList<>();
         if (charges.size() > 0) {
-            double MaxAmount = charges.getMaxCharge().Amount;
+            double MaxAmount = charges.getMaxCharge().amount;
 
             for (Charge charge: charges){
                 startPoints.addAll(getStartPoints(
                         charge,
-                        Math.max(10, 1/MaxAmount * Math.abs(charge.Amount) * MAX_NUMBER_OF_START_POINTS)
+                        Math.max(10, 1/MaxAmount * Math.abs(charge.amount) * MAX_NUMBER_OF_START_POINTS)
                 ));
             }
         }
@@ -88,8 +88,8 @@ public final class Physics {
         Charge center = null;
 
         for (Charge charge: charges){
-            double dx = x - charge.Position.x;
-            double dy = y - charge.Position.y;
+            double dx = x - charge.position.x;
+            double dy = y - charge.position.y;
 
             if (isNearToCharge(dx, dy)){
                 center = charge;
@@ -107,8 +107,8 @@ public final class Physics {
         double phi = phi0;
 
         for (int n = 0; n < numberOfStartPoints; n++) {
-            double x = center.Position.x + START_POINT_RADIUS * Math.sin(phi);
-            double y = center.Position.y + START_POINT_RADIUS * Math.cos(phi);
+            double x = center.position.x + START_POINT_RADIUS * Math.sin(phi);
+            double y = center.position.y + START_POINT_RADIUS * Math.cos(phi);
             StartPoint startPoint = new StartPoint(x, y, center);
             startPointsOneCharge.add(startPoint);
             phi += phi0;

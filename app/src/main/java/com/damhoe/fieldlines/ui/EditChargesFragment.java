@@ -1,39 +1,45 @@
 package com.damhoe.fieldlines.ui;
 
-import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.MenuProvider;
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.core.view.MenuProvider;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.damhoe.fieldlines.domain.Charge;
 import com.damhoe.fieldlines.domain.ChargeList;
+import com.damhoe.fieldlines.ui.EditableChargeAdapter.ChargeViewHolder;
 import com.example.fieldlines.R;
 import com.example.fieldlines.databinding.FragmentEditChargesBinding;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Locale;
+import java.util.Objects;
 
 
 public class EditChargesFragment extends Fragment implements NotifyItemClickListener {
 
     FragmentEditChargesBinding binding;
     SharedViewModel viewModel;
+    ActionMode actionMode;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -56,7 +62,7 @@ public class EditChargesFragment extends Fragment implements NotifyItemClickList
         adapter.updateCharges(viewModel.getCharges().getValue());
         binding.chargesRecyclerView.setAdapter(adapter);
         binding.chargesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.chargesRecyclerView.addItemDecoration(new EditableChargeAdapter.ItemDecoration());
+        binding.chargesRecyclerView.addItemDecoration(new EditableChargeAdapter.ItemDecoration(4));
     }
 
     private void updateAdapter(ChargeList charges) {
@@ -74,6 +80,7 @@ public class EditChargesFragment extends Fragment implements NotifyItemClickList
                 menuInflater.inflate(R.menu.menu, menu);
                 menu.removeItem(R.id.menu_library);
                 menu.removeItem(R.id.menu_about);
+                menu.findItem(R.id.menu_help).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             }
 
             @Override
@@ -92,35 +99,46 @@ public class EditChargesFragment extends Fragment implements NotifyItemClickList
 
     @Override
     public void notifyChargeClicked(int position, Charge charge) {
-        // Open edit charge dialog
-        showEditChargeDialog(position, charge);
+        ChargeViewHolder viewHolder = (ChargeViewHolder)
+                binding.chargesRecyclerView.findViewHolderForAdapterPosition(position);
+
+        if (viewHolder == null) {
+            return;
+        }
+
+        PopupMenu popup = new PopupMenu(requireContext(), viewHolder.buttonMore);
+        popup.getMenuInflater().inflate(R.menu.menu_charge, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.edit) {
+                    showEditChargeDialog(position, charge);
+                    return true;
+                }
+                if (menuItem.getItemId() == R.id.delete) {
+                    Charge removedCharge = viewModel.removeCharge(position);
+                    Snackbar.make(binding.getRoot(), "Removed charge", Snackbar.LENGTH_SHORT)
+                            .setAction("Undo", view -> {
+                                viewModel.addCharge(position, removedCharge);
+                            })
+                            .show();
+                    return true;
+                }
+                return false;
+            }
+        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            popup.setForceShowIcon(true);
+        }
+        popup.show();
     }
 
     private void showEditChargeDialog(int position, Charge charge) {
-
-        View layout = getLayoutInflater().inflate(R.layout.dialog_single_charge, null, false);
-        TextInputEditText editTextX = layout.findViewById(R.id.edit_x_coordinate);
-        TextInputEditText editTextY = layout.findViewById(R.id.edit_y_coordinate);
-        TextInputEditText editTextAmount = layout.findViewById(R.id.edit_amount);
-
-        if (charge != null) {
-            editTextX.setText(String.valueOf(charge.Position.x));
-            editTextY.setText(String.valueOf(charge.Position.y));
-            editTextAmount.setText(String.format(Locale.US, "%.2f", charge.Amount));
-        }
-
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Add charge")
-                .setView(layout)
-                .setPositiveButton("OK", (d, i) -> {
-                    int x = Integer.parseInt(editTextX.getEditableText().toString());
-                    int y = Integer.parseInt(editTextY.getEditableText().toString());
-                    double amount = Double.parseDouble(editTextAmount.getEditableText().toString());
-                    viewModel.updateCharge(position, x, y, amount);
-                    d.dismiss();
-                })
-                .setNegativeButton("Cancel", (d, i) -> d.cancel())
-                .show();
-
+        new ChargeAlertDialogFactory(requireContext(), new ChargeRequestListener() {
+            @Override
+            public void notifyChargeRequest(int x, int y, double amount) {
+                viewModel.updateCharge(position, x, y, amount);
+            }
+        }).createEditChargeDialog(charge).show();
     }
 }

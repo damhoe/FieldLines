@@ -1,7 +1,5 @@
 package com.damhoe.fieldlines.ui;
 
-import android.graphics.Point;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -32,6 +30,24 @@ public class SharedViewModel extends ViewModel {
       charges.postValue(mCharges);
    }
 
+   protected void addCharge(int position, Charge charge) {
+      ChargeList mCharges = charges.getValue();
+      if (mCharges != null) {
+         mCharges.add(position, charge);
+      }
+      charges.postValue(mCharges);
+   }
+
+   protected Charge removeCharge(int position) {
+      ChargeList mCharges = charges.getValue();
+      Charge removed = null;
+      if (mCharges != null) {
+         removed = mCharges.remove(position);
+         charges.postValue(mCharges);
+      }
+      return removed;
+   }
+
    protected void initializeMonopole() {
       charges.postValue(ChargeList.Factory.createMonopole());
    }
@@ -48,9 +64,9 @@ public class SharedViewModel extends ViewModel {
        ChargeList mCharges = charges.getValue();
        if (mCharges != null) {
           Charge toEdit = mCharges.get(position);
-          toEdit.Position.x = x;
-          toEdit.Position.y = y;
-          toEdit.Amount = amount;
+          toEdit.position.x = x;
+          toEdit.position.y = y;
+          toEdit.amount = amount;
           mCharges.set(position, toEdit);
        }
        charges.postValue(mCharges);
