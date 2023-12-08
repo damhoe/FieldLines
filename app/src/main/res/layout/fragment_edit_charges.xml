@@ -1,6 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.damhoe.fieldlines.ui.EditChargesFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.damhoe.fieldlines.charges.presentation.EditChargesFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -10,11 +11,23 @@
             android:id="@+id/charges_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?colorSurfaceBright"
             android:paddingTop="8dp"
             android:paddingBottom="24dp"
             android:overScrollMode="ifContentScrolls"
-            />
+            tools:itemCount="5"
+            tools:listitem="@layout/item_charge" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            style="@style/Widget.Material3.FloatingActionButton.Primary"
+            android:id="@+id/button_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_add_24dp"
+            android:contentDescription="Add charge" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

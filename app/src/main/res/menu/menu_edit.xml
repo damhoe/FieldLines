@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/edit_charges"
+        android:title="@string/title_edit_charge" />
+
+    <item android:id="@+id/add_monopole"
+        android:title="@string/title_new_monopole" />
+
+    <item android:id="@+id/add_dipole"
+        android:title="@string/title_new_dipole" />
+
+    <item android:id="@+id/add_quadropole"
+        android:title="@string/title_new_quadropole" />
+</menu>

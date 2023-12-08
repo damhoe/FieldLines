@@ -6,7 +6,7 @@
     <string name="title_new_monopole">Monopole</string>
     <string name="title_new_dipole">Dipole</string>
     <string name="title_new_quadropole">Quadropole</string>
-    <string name="title_add">Add charge</string>
+    <string name="title_add">Charge</string>
     <string name="title_library">Library</string>
 
     <string name="label_save">Save</string>
@@ -27,9 +27,9 @@ Note that for this kind of drawing, where the field-line density is intended to 
 
 Source: WIKIPEDIA"</string>
     <string name="title_help_main_text">Field lines in physics</string>
-    <string name="title_edit_charge">Edit charge</string>
+    <string name="title_edit_charge">Edit charges</string>
     <string name="title_add_charge">Add charge</string>
     <string name="charge_item_q_text">Charge\t q = %.2f</string>
-    <string name="charge_item_position_text">at\t (%d, %d)</string>
+    <string name="charge_item_position_text">at\t (%.0f, %.0f)</string>
 
 </resources>
