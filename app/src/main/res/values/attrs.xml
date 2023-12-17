@@ -1,7 +1,9 @@
 
 <resources>
     <attr name="colorNegativeCharge" format="color"/>
+    <attr name="colorOnNegativeCharge" format="color"/>
     <attr name="colorPositiveCharge" format="color"/>
+    <attr name="colorOnPositiveCharge" format="color"/>
 
     <declare-styleable name="FieldLinesView">
         <attr name="axisColor" format="color"/>

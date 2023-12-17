@@ -26,9 +26,11 @@
         <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>
         <item name="colorSurfaceInverse">@color/md_theme_dark_inverseSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>
-        <item name="colorPositiveCharge">@color/md_theme_dark_tertiaryContainer</item>
-        <item name="colorNegativeCharge">@color/md_theme_dark_errorContainer</item>
-        <item name="axisColor">@color/md_theme_dark_secondaryContainer</item>
+        <item name="colorPositiveCharge">@color/md_theme_dark_positiveCharge</item>
+        <item name="colorOnPositiveCharge">@color/md_theme_dark_onPositiveCharge</item>
+        <item name="colorNegativeCharge">@color/md_theme_dark_negativeCharge</item>
+        <item name="colorOnNegativeCharge">@color/md_theme_dark_onNegativeCharge</item>
+        <item name="axisColor">@color/md_theme_dark_axis</item>
         <item name="fieldLinesColor">@color/md_theme_dark_secondary</item>
     </style>
 </resources>

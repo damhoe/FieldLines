@@ -12,8 +12,7 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:paddingBottom="24dp"
-            android:paddingTop="24dp"
-            >
+            android:paddingTop="24dp">
 
             <TextView
                 android:id="@+id/title"
@@ -28,18 +27,90 @@
                 />
 
             <TextView
-                android:id="@+id/text_main"
+                android:id="@+id/text1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginTop="24dp"
-                android:text="@string/text_help"
+                android:text="@string/text_help1"
                 android:textAlignment="textStart"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 />
+
+            <ImageView
+                android:id="@+id/formula1"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                app:layout_constraintTop_toBottomOf="@id/text1"
+                android:src="@drawable/formula_lines_path_derivation"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/formula1"
+                android:layout_marginTop="8dp"
+                android:text="@string/text_help2"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                />
+
+            <ImageView
+                android:id="@+id/formula2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:layout_constraintTop_toBottomOf="@id/text2"
+                android:src="@drawable/formula_grad_phi"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/text3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/formula2"
+                android:layout_marginTop="8dp"
+                android:text="@string/text_help3"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+
+            <ImageView
+                android:id="@+id/formula3"
+                android:layout_width="match_parent"
+                android:layout_height="74dp"
+                app:layout_constraintTop_toBottomOf="@id/text3"
+                android:src="@drawable/formula_gauss_law_charge"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/text4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/formula3"
+                android:layout_marginTop="8dp"
+                android:text="@string/text_help4"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+
+            <TextView
+                android:id="@+id/text5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/text_help5"
+                android:textAlignment="textStart"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
