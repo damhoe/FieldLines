@@ -9,8 +9,8 @@ import kotlin.math.sqrt
  * Created by damian on 25.11.2017.
  */
 data class FieldPoint(
-    val x: Float,
-    val y: Float,
+    val x: Double,
+    val y: Double,
     val forceX: Double,
     val forceY: Double
 ) {

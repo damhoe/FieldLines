@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.damhoe.fieldlines.app.Vector
 import com.damhoe.fieldlines.charges.application.PointChargeDialogBuilder
 import com.damhoe.fieldlines.charges.domain.PointCharge
 import com.damhoe.fieldlines.charges.presentation.ChargeItemAdapter.ChargeViewHolder
@@ -123,7 +124,7 @@ class EditChargesFragment : Fragment() {
     private fun setupAddChargeButton() {
         binding.buttonAdd.setOnClickListener {
 
-            val defaultCoordinates = PointF(0f, 0f)
+            val defaultCoordinates = Vector(0.0, 0.0)
             val defaultCharge = 1.0
 
             PointChargeDialogBuilder(requireContext())

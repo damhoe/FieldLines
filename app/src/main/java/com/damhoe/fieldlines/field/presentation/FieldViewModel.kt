@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.damhoe.fieldlines.app.Vector
 import com.damhoe.fieldlines.field.domain.Field
 import com.damhoe.fieldlines.charges.domain.PointCharge
 import com.damhoe.fieldlines.settings.SettingsManager
@@ -32,7 +33,7 @@ class FieldViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { settingsManager.setMaxLinesCount(value) }
     }
 
-    private val mField = MutableLiveData<Field>().apply { value = Field.monopole() }
+    private val mField = MutableLiveData<Field>().apply { value = Field.dipole() }
 
     var field: LiveData<Field> = mField
 
@@ -40,9 +41,9 @@ class FieldViewModel(application: Application) : AndroidViewModel(application) {
     fun initializeDipole() = mField.postValue(Field.dipole())
     fun initializeQuadropole() = mField.postValue(Field.quadropole())
 
-    fun createPointCharge(x: Float, y: Float, charge: Double) =
+    fun createPointCharge(x: Double, y: Double, charge: Double) =
         mField.value?.run {
-            PointCharge(position = PointF(x, y), charge = charge).let { charge ->
+            PointCharge(position = Vector(x, y), charge = charge).let { charge ->
                 addPointCharge(charge)
                     .onSuccess { mField.postValue(this) }
                     .mapCatching { charge }
@@ -63,7 +64,7 @@ class FieldViewModel(application: Application) : AndroidViewModel(application) {
                 .onSuccess { mField.postValue(this) }
         } ?: failure(IllegalStateException("Field is not initialized"))
 
-    fun updateCharge(position: Int, newX: Float, newY: Float, newCharge: Double): Result<Unit> =
+    fun updateCharge(position: Int, newX: Double, newY: Double, newCharge: Double): Result<Unit> =
         mField.value?.run {
             updatePointChargeAt(position, newX, newY, newCharge)
                 .onSuccess { mField.postValue(this) }

@@ -3,15 +3,14 @@ package com.damhoe.fieldlines.field.application
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.PointF
 import android.graphics.RectF
 import android.view.View
 import androidx.annotation.ColorInt
 import com.damhoe.fieldlines.app.utils.Transformation
-import com.damhoe.fieldlines.field.domain.FieldPoint
 import com.damhoe.fieldlines.charges.domain.PointCharge
 import com.damhoe.fieldlines.field.domain.Field
 import com.damhoe.fieldlines.field.domain.StartPoint
+import com.damhoe.fieldlines.app.Vector
 import com.example.fieldlines.R
 import com.google.android.material.R.attr
 import com.google.android.material.color.MaterialColors
@@ -21,7 +20,6 @@ import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sign
 import kotlin.math.sin
-import kotlin.math.sqrt
 
 class FieldVisualizer(
     var view: View,
@@ -30,6 +28,9 @@ class FieldVisualizer(
     var maxNumberOfLines: Int // Number of field line for max charge, the amount of
                                 // field line of other charges is scaled by q / qMax
 ) {
+    companion object {
+        const val TWO_PI = 2.0 * PI
+    }
 
     @ColorInt
     private val colorPositiveCharge = MaterialColors.getColor(view, R.attr.colorPositiveCharge)
@@ -57,13 +58,16 @@ class FieldVisualizer(
 
     // Point charge
     private val pointChargeRadius = 30f
-    private val startPointRadius = 10f
-    private val halfLineSegmentLength = 10f
-    private val maxSegmentsPerLine = 1_000
+    private val startPointRadius = 10.0
+
     private val calculatedToDrawnPointsRatio = 2
 
+    private val path: Path = Path()
+
     private var startPoints: MutableList<StartPoint> = mutableListOf()
-    private var visitedStartPoints: MutableList<StartPoint> = mutableListOf()
+    private lateinit var positiveCharges: List<PointCharge>
+    private lateinit var negativeCharges: List<PointCharge>
+    private var negativeChargeIntersections: MutableList<MutableList<Double>> = mutableListOf()
 
     /**
      * Visualize the field
@@ -74,14 +78,19 @@ class FieldVisualizer(
             startPoints.clear()
         }
 
-        if (visitedStartPoints.isNotEmpty()) {
-            visitedStartPoints.clear()
+        if (negativeChargeIntersections.isNotEmpty()) {
+            negativeChargeIntersections.clear()
         }
 
         // Check if charges are present
         if (field.isEmpty()) {
             return
         }
+
+        negativeCharges = field.pointCharges.filter { it.charge < 0 }
+        positiveCharges = field.pointCharges.filter { it.charge > 0 }
+
+        repeat(negativeCharges.size) { negativeChargeIntersections.add(mutableListOf()) }
 
         // Update space
         val width = transform.width
@@ -128,142 +137,123 @@ class FieldVisualizer(
     }
 
     private fun drawFieldLines(canvas: Canvas) {
-        // Get start points for the field lines and
-        // connect them to the point charge center
-        val maxCharge = field.maxPointCharge().charge
-        for (pointCharge in field.pointCharges) {
-            val numberOfLines =
-                (maxNumberOfLines * abs(pointCharge.charge / maxCharge)).roundToInt()
-            val points = getStartPoints(pointCharge, numberOfLines)
-            startPoints.addAll(points)
-
-            // Connect start points with center
-            points.forEach { drawConnection(canvas, pointCharge.position, it.coordinates) }
-        }
-
-        for (p in startPoints) {
-            if (p !in visitedStartPoints) {
-                drawFieldLineNew(canvas, p)
-            }
-        }
-    }
-
-    private fun drawConnection(canvas: Canvas, p1: PointF, p2: PointF) {
-        with(transform) {
-            val x1 = toPixelX(p1.x)
-            val x2 = toPixelX(p2.x)
-            val y1 = toPixelY(p1.y)
-            val y2 = toPixelY(p2.y)
-            canvas.drawLine(x1, y1, x2, y2, fieldLinePaint)
-        }
-    }
-
-    private fun getStartPoints(center: PointCharge, numberOfLines: Int): List<StartPoint> {
-        val distanceToCenter = startPointRadius * transform.ratioX // ratio X = ratio Y
-
-        // Calculate Distance of start points
-        val phi0 = 2.0 * PI / numberOfLines
-
-        return generateSequence(0.0) { it + phi0 }
-            .take(numberOfLines)
-            .map {
-                center.position.run {
-                    val x = x + (distanceToCenter * sin(it).toFloat())
-                    val y = y + distanceToCenter * cos(it).toFloat()
-                    val d = 2 * sin(phi0).toFloat() * distanceToCenter
-                    StartPoint(
-                        coordinates = PointF(x, y),
-                        direction = sign(center.charge).toInt(),
-                        distanceSquared = d * d
-                    )
-                }
-            }
-            .toList()
-    }
-
-    private val path: Path = Path()
-    private val minCalculatedPoints = 10;
-
-    private fun drawFieldLineNew(canvas: Canvas, startPoint: StartPoint) {
         /**
-         * Create a new path and draw it afterwards.
+         * Since lines from sources never intersect they can not be drawn twice
+         * when starting from different charges.
+         * First, draw the field lines for all positive charges.
          */
+        val distanceToCenter = startPointRadius * transform.ratioX // ratio X = ratio Y
+        val maxCharge = field.maxPointCharge().charge
+        var startPointsPositiveCharges: Sequence<StartPoint> = sequenceOf()
 
+        val calculator = FieldLineCalculator(field)
+            .apply {
+                space = this@FieldVisualizer.space
+                thresholdDistance = distanceToCenter
+                stepSize = 5e-1 * transform.ratioX
+            }
+
+        for (pointCharge in positiveCharges) {
+            val numberOfLines = (maxNumberOfLines * abs(pointCharge.charge / maxCharge))
+                .roundToInt()
+
+            val startPoints = generateStartPoints(pointCharge, numberOfLines, distanceToCenter)
+
+            startPoints.forEach {
+                // Calculate the line = sequence of Vectors
+                val line = calculator.calculateLine(it.coordinates, it.direction)
+                // Draw the line
+                drawLine(line, canvas)
+            }
+        }
+
+        negativeCharges.forEachIndexed { index, pointCharge ->
+            val numberOfLines = (maxNumberOfLines * abs(pointCharge.charge / maxCharge))
+                .roundToInt()
+            val missingAngles = getMissingStartPointAngles(
+                index = index,
+                numberOfLines = numberOfLines,
+                intersections = calculator.negativeChargeIntersections
+            )
+            val startPoints = generateStartPoints(pointCharge, missingAngles, distanceToCenter)
+            startPoints.forEach {
+                val line = calculator.calculateLine(it.coordinates, it.direction)
+                drawLine(line, canvas)
+            }
+        }
+    }
+
+    private fun drawLine(points: Sequence<Vector>, canvas: Canvas) {
+        // Reset to empty path
         path.reset()
 
-        var fieldPoint = field.calculateFieldPoint(startPoint.coordinates)
-        drawSegment(path, fieldPoint)
+        // Create the path
+        val start = points.firstOrNull() ?: return
 
-        drawing@ for (n in 0..maxSegmentsPerLine) {
-
-            for (i in 1..calculatedToDrawnPointsRatio) {
-                val nextPoint = field
-                    .moveAlongFieldLine(fieldPoint, transform.ratioX, startPoint.direction)
-
-                if (isNotInSpace(nextPoint)) {
-                    break@drawing
-                }
-
-                if ((n > minCalculatedPoints) and isNearStartPoint(nextPoint)) {
-                    break@drawing
-                }
-
-                fieldPoint = field.calculateFieldPoint(nextPoint)
-            }
-
-            drawSegment(path, fieldPoint)
+        with(transform) {
+            // Move to first point
+            path.moveTo(toPixelX(start.x), toPixelY(start.y))
+            // Make path
+            points.forEach { path.lineTo(toPixelX(it.x), toPixelY(it.y)) }
         }
 
-        // Draw path
         canvas.drawPath(path, fieldLinePaint)
     }
 
-    /**
-     * Draw a segment of a field line at a given field point.
-     */
-    private fun drawSegment(path: Path, anchor: FieldPoint) {
+    private fun getMissingStartPointAngles(
+        index: Int,
+        numberOfLines: Int,
+        intersections: List<List<Double>>
+    ) : Sequence<Double> {
         /**
-         * The segment is parallel to the field vector at the anchor point
-         * which is located at the center of the line. The length of the segment
-         * only depends on the pixel resolution of the field lines.
+         * Calculate the angles for that field lines are missing
+         * for a negative charge.
+         *
+         * If positive charges exist in the space
+         * the probability that some field lines end at negative charges
+         * is high since these act as sinks.
          */
-        val fx: Float
-        val fy: Float
-        with (anchor) {
-            val f = sqrt(forceX * forceX + forceY * forceY)
-            fx = (forceX / f).toFloat()
-            fy = (forceY / f).toFloat()
+        val gapAngle = TWO_PI / numberOfLines
+        val startAngle = 0.0
+        return generateSequence(startAngle) { it + gapAngle }
+            .take(numberOfLines)
+            .filter { phi -> intersections[index].none { abs(it - phi) < gapAngle * 0.8 } }
+    }
+
+    private fun generateStartPoints(
+        center: PointCharge,
+        numberOfLines: Int,
+        distanceToCenter: Double
+    ): Sequence<StartPoint> {
+        // Distance between start points
+        val gapAngle = TWO_PI / numberOfLines
+        val startAngle = 0.0
+        return generateSequence(startAngle) { it + gapAngle }
+            .take(numberOfLines)
+            .map {
+                center.position.run {
+                    val rx = x + distanceToCenter * cos(it)
+                    val ry = y + distanceToCenter * sin(it)
+                    StartPoint(coordinates = Vector(rx, ry), direction = sign(center.charge))
+                }
+            }
+    }
+
+    private fun generateStartPoints(
+        center: PointCharge,
+        angles: Sequence<Double>,
+        distanceToCenter: Double
+    ) : Sequence<StartPoint> {
+        return angles.map {
+            center.run {
+                val x = position.x + distanceToCenter * cos(it)
+                val y = position.y + distanceToCenter * sin(it)
+                StartPoint(coordinates = Vector(x, y), direction = sign(center.charge))
+            }
         }
-
-        val anchorPixelX = transform.toPixelX(anchor.x)
-        val anchorPixelY = transform.toPixelY(anchor.y)
-        val dx = halfLineSegmentLength * fx
-        val dy = halfLineSegmentLength * fy
-
-        path.run {
-            moveTo(anchorPixelX + dx, anchorPixelY - dy)
-            lineTo(anchorPixelX - dx, anchorPixelY + dy)
-        }
     }
 
-    private fun isNear(startPoint: StartPoint, p: PointF) = with(startPoint) {
-        val dx = coordinates.x - p.x
-        val dy = coordinates.y - p.y
-        (dx * dx + dy * dy) < 1.5 * distanceSquared / 4
-    }
-
-    private fun isNearStartPoint(point: PointF): Boolean =
-        startPoints.filter { isNear(it, point) }
-            .getOrNull(0)
-            ?.let { visitedStartPoints.add(it); true }
-            ?: false
-
-    private fun isNotInSpace(point: PointF) = with(point) {
-        (x !in space.left..space.right) ||
-                (y !in space.bottom..space.top)
-    }
-
-    private fun isCircleInViewport(center: PointF, radius: Float): Boolean {
+    private fun isCircleInViewport(center: Vector, radius: Float): Boolean {
         return true
     }
 }

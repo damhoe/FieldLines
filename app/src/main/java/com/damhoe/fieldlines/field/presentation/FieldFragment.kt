@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
+import com.damhoe.fieldlines.app.Vector
 import com.damhoe.fieldlines.charges.application.PointChargeDialogBuilder
 import com.example.fieldlines.R
 import com.example.fieldlines.databinding.DialogSettingsBinding
@@ -168,8 +169,8 @@ class FieldFragment : Fragment() {
     private fun findNavController(): NavController =
         findNavController(requireActivity(), R.id.nav_host_fragment)
 
-    fun startCreateChargeDialog(position: PointF? = null) {
-        val point = position ?: PointF(0f, 0f)
+    fun startCreateChargeDialog(position: Vector? = null) {
+        val point = position ?: Vector(0.0, 0.0)
         val defaultCharge = 1.0
 
         PointChargeDialogBuilder(requireContext())

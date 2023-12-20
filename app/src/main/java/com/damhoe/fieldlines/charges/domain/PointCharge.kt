@@ -1,6 +1,6 @@
 package com.damhoe.fieldlines.charges.domain
 
-import android.graphics.PointF
+import com.damhoe.fieldlines.app.Vector
 import java.util.UUID
 
 /**
@@ -10,7 +10,7 @@ import java.util.UUID
  */
 data class PointCharge(
     var id: Long = UUID.randomUUID().mostSignificantBits,
-    var position: PointF,
+    var position: Vector,
     var charge: Double
 ) {
     fun copy(): PointCharge = PointCharge(id, position, charge)

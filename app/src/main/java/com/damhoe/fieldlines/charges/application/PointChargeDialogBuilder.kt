@@ -2,7 +2,6 @@ package com.damhoe.fieldlines.charges.application
 
 import android.content.Context
 import android.content.DialogInterface
-import android.graphics.PointF
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import com.damhoe.fieldlines.app.Vector
 import com.example.fieldlines.R
 import com.example.fieldlines.databinding.DialogSingleChargeBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -28,7 +28,7 @@ class PointChargeDialogBuilder(context: Context) : MaterialAlertDialogBuilder(co
     val x: Float
         get() = binding.editXCoordinate.editableText.toString().toFloat()
 
-    fun setPoint(point: PointF) = binding.run {
+    fun setPoint(point: Vector) = binding.run {
         editXCoordinate.text = SpannableStringBuilder.valueOf("%.1f".format(point.x))
         editYCoordinate.text = SpannableStringBuilder.valueOf("%.1f".format(point.y))
         this@PointChargeDialogBuilder
@@ -41,11 +41,11 @@ class PointChargeDialogBuilder(context: Context) : MaterialAlertDialogBuilder(co
 
     fun setPositiveButton(
         text: String,
-        onClick: (x: Float, y: Float, charge: Double) -> Unit
+        onClick: (x: Double, y: Double, charge: Double) -> Unit
     ) : PointChargeDialogBuilder {
         setPositiveButton(text) { _, _ ->
-            val x = binding.editXCoordinate.text.toString().toFloat()
-            val y = binding.editYCoordinate.text.toString().toFloat()
+            val x = binding.editXCoordinate.text.toString().toDouble()
+            val y = binding.editYCoordinate.text.toString().toDouble()
             val charge = binding.editAmount.text.toString().toDouble()
             onClick(x, y, charge)
         }

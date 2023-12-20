@@ -1,8 +1,10 @@
 package com.damhoe.fieldlines.field.domain
 
 import android.graphics.PointF
+import com.damhoe.fieldlines.app.Vector
 import com.damhoe.fieldlines.app.exception.PointsTooCloseException
 import com.damhoe.fieldlines.charges.domain.PointCharge
+import com.damhoe.fieldlines.field.application.times
 import kotlin.Result.Companion.failure
 import kotlin.Result.Companion.success
 import kotlin.math.sqrt
@@ -36,10 +38,10 @@ class Field {
         return success(Unit)
     }
 
-    private fun isPositionOccupied(point: PointF, exceptId: Long = -1) =
+    private fun isPositionOccupied(point: Vector, exceptId: Long = -1) =
         mutablePointCharges.filterNot { it.id == exceptId }.any { isNear(it.position, point) }
 
-    private fun isNear(p1: PointF, p2: PointF): Boolean {
+    private fun isNear(p1: Vector, p2: Vector): Boolean {
         val dx = p1.x - p2.x
         val dy = p1.y - p2.y
         return (dx * dx + dy * dy) < nearestDistanceOfCharges
@@ -54,49 +56,38 @@ class Field {
 
     fun updatePointChargeAt(
         position: Int,
-        newX: Float,
-        newY: Float,
+        newX: Double,
+        newY: Double,
         newCharge: Double
     ): Result<Unit> = mutablePointCharges.getOrNull(position)?.run {
-        if (isPositionOccupied(PointF(newX, newY), id)) {
+        if (isPositionOccupied(Vector(newX, newY), id)) {
             return failure(PointsTooCloseException("At this point, a charge already exists"))
         }
-        this.position = PointF(newX, newY)
+        this.position = Vector(newX, newY)
         charge = newCharge
         success(Unit)
     } ?: failure(IndexOutOfBoundsException(
         "Position $position exceeds number of point charges")
     )
-    fun moveAlongFieldLine(fieldPoint: FieldPoint, ratio: Float, direction: Int): PointF =
-        fieldPoint.run {
-            val scale = 10.0 * ratio * direction
-            PointF((x + scale * relForceX).toFloat(), (y + scale * relForceY).toFloat())
-        }
 
-    // The equivalent of f = 1 / 4 * Pi * e0
-    // in reasonable units for the scaling of the field lines
-    private val f = 100.0
-
-    @Suppress("LocalVariableName")
-    fun calculateFieldPoint(point: PointF): FieldPoint {
-        var Ex = 0.0
-        var Ey = 0.0
+    /**
+     * The force corresponds to field strength in
+     * appropriate units.
+     */
+    fun calculateForce(point: Vector): Vector {
+        // Start with an empty field
+        val force = Vector(x = 0.0, y = 0.0)
 
         for (charge in pointCharges) {
             val dx = point.x - charge.position.x
             val dy = point.y - charge.position.y
             val d = dx * dx + dy * dy
             val factor = charge.charge * 1.0 / (d + sqrt(d))
-            Ex += factor * dx
-            Ey += factor * dy
+            force.apply { x += factor * dx; y += factor * dy }
         }
 
-        return FieldPoint(
-            x = point.x,
-            y = point.y,
-            forceX = f * Ex,
-            forceY = f * Ey
-        )
+        val absoluteForce = force.x * force.x + force.y * force.y
+        return  (1.0/absoluteForce).times(force)
     }
 
     fun isEmpty() = mutablePointCharges.size <= 0
@@ -111,7 +102,7 @@ class Field {
          * A single point charge
          */
         fun monopole(): Field = Field().apply {
-            mutablePointCharges.add(createPointCharge(PointF(0f, 0f), -1.0))
+            mutablePointCharges.add(createPointCharge(Vector(0.0, 0.0), -1.0))
         }
 
         /**
@@ -120,8 +111,8 @@ class Field {
         fun dipole(): Field = Field().apply {
             val absoluteCharge = 1.0
             mutablePointCharges.apply{
-                add(createPointCharge(PointF(0f, 5f), absoluteCharge))
-                add(createPointCharge(PointF(0f, -5f), -absoluteCharge))
+                add(createPointCharge(Vector(0.0, 5.0), absoluteCharge))
+                add(createPointCharge(Vector(0.0, -5.0), -absoluteCharge))
             }
         }
 
@@ -133,14 +124,14 @@ class Field {
         fun quadropole(): Field = Field().apply {
             val absoluteCharge = 1.0
             mutablePointCharges.apply{
-                add(createPointCharge(PointF(5f, 5f), absoluteCharge))
-                add(createPointCharge(PointF(-5f, -5f), absoluteCharge))
-                add(createPointCharge(PointF(5f, -5f), -absoluteCharge))
-                add(createPointCharge(PointF(-5f, 5f), -absoluteCharge))
+                add(createPointCharge(Vector(5.0, 5.0), absoluteCharge))
+                add(createPointCharge(Vector(-5.0, -5.0), absoluteCharge))
+                add(createPointCharge(Vector(5.0, -5.0), -absoluteCharge))
+                add(createPointCharge(Vector(-5.0, 5.0), -absoluteCharge))
             }
         }
 
-        private fun createPointCharge(position: PointF, charge: Double) =
+        private fun createPointCharge(position: Vector, charge: Double) =
             PointCharge(position = position, charge = charge)
     }
 }

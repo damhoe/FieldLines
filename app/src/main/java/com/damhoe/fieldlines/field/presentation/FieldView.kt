@@ -16,6 +16,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.findFragment
+import com.damhoe.fieldlines.app.Vector
 import com.damhoe.fieldlines.field.domain.Field
 import com.damhoe.fieldlines.field.application.FieldVisualizer
 import com.damhoe.fieldlines.app.utils.MathUtils
@@ -190,10 +191,10 @@ class FieldView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
 
         override fun onLongPress(event: MotionEvent) {
-            val point: PointF = transformation.run {
-                val x = toRealX(event.x).roundToInt().toFloat()
-                val y = toRealY(event.y).roundToInt().toFloat()
-                PointF(x, y)
+            val point: Vector = transformation.run {
+                val x = toRealX(event.x).roundToInt().toDouble()
+                val y = toRealY(event.y).roundToInt().toDouble()
+                Vector(x, y)
             }
 
             (findFragment() as FieldFragment).startCreateChargeDialog(point)

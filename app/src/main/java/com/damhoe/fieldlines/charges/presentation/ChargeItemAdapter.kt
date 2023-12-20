@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.damhoe.fieldlines.app.Vector
 import com.damhoe.fieldlines.charges.domain.PointCharge
 import com.damhoe.fieldlines.charges.presentation.ChargeItemAdapter.ChargeViewHolder
 import com.example.fieldlines.R
@@ -68,7 +69,7 @@ class ChargeItemAdapter(private val onItemCLick: (position: Int, charge: PointCh
             chargeImage.setImageResource(getChargeImageResourceId(amount))
         }
 
-        private fun bindPosition(position: PointF) {
+        private fun bindPosition(position: Vector) {
             val context = itemView.context
             val positionTemplate = context.getString(R.string.charge_item_position_text)
             binding.textPosition.text =
