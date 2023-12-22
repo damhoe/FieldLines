@@ -58,29 +58,17 @@ class FieldVisualizer(
 
     // Point charge
     private val pointChargeRadius = 30f
-    private val startPointRadius = 10.0
-
-    private val calculatedToDrawnPointsRatio = 2
+    private val startPointRadius = 1.0e-3
 
     private val path: Path = Path()
 
-    private var startPoints: MutableList<StartPoint> = mutableListOf()
     private lateinit var positiveCharges: List<PointCharge>
     private lateinit var negativeCharges: List<PointCharge>
-    private var negativeChargeIntersections: MutableList<MutableList<Double>> = mutableListOf()
 
     /**
      * Visualize the field
      */
     fun draw(canvas: Canvas) {
-        // Initialize
-        if (startPoints.isNotEmpty()) {
-            startPoints.clear()
-        }
-
-        if (negativeChargeIntersections.isNotEmpty()) {
-            negativeChargeIntersections.clear()
-        }
 
         // Check if charges are present
         if (field.isEmpty()) {
@@ -89,8 +77,6 @@ class FieldVisualizer(
 
         negativeCharges = field.pointCharges.filter { it.charge < 0 }
         positiveCharges = field.pointCharges.filter { it.charge > 0 }
-
-        repeat(negativeCharges.size) { negativeChargeIntersections.add(mutableListOf()) }
 
         // Update space
         val width = transform.width
@@ -142,9 +128,8 @@ class FieldVisualizer(
          * when starting from different charges.
          * First, draw the field lines for all positive charges.
          */
-        val distanceToCenter = startPointRadius * transform.ratioX // ratio X = ratio Y
+        val distanceToCenter = startPointRadius //* transform.ratioX // ratio X = ratio Y
         val maxCharge = field.maxPointCharge().charge
-        var startPointsPositiveCharges: Sequence<StartPoint> = sequenceOf()
 
         val calculator = FieldLineCalculator(field)
             .apply {

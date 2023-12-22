@@ -6,11 +6,15 @@ import com.damhoe.fieldlines.app.Vector
 import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.atan2
+import kotlin.properties.Delegates
 
 class FieldLineCalculator(val field: Field) {
     private val maxIterations: Int = 10_000
     private val integrator: Integrator = MidpointIntegrator()
-    var stepSize: Double = 1e-2
+    private val maxStepSize = 1e-3 // keep approximation of integrator valid
+    var stepSize: Double by Delegates.vetoable(1e-3) { _, _, new ->
+        new < maxStepSize
+    }
 
     // Area of the field for which charges and field lines are drawn.
     // This area depends on the current zoom and translation and needs to
@@ -33,9 +37,15 @@ class FieldLineCalculator(val field: Field) {
         start: Vector,
         direction: Double
     ): Sequence<Vector> {
-        return generateSequence(start) { currentPoint ->
-            integrator.step(currentPoint, stepSize, field::calculateForce, direction)
-                .takeUnless { evaluateStopConditions(it, direction) }
+        return sequence {
+            var shouldStop = false
+            var currentPoint = start
+            while (!shouldStop) {
+                val nextPoint = integrator.step(currentPoint, stepSize, field::calculateForce, direction)
+                yield(nextPoint)
+                shouldStop = evaluateStopConditions(nextPoint, direction)
+                currentPoint = nextPoint
+            }
         }.take(maxIterations)
     }
 
@@ -55,11 +65,11 @@ class FieldLineCalculator(val field: Field) {
     }
 
     private fun isNear(dx: Double, dy: Double): Boolean {
-        return dx * dx + dy * dy < thresholdDistance
+        return (dx * dx + dy * dy) < thresholdDistance * thresholdDistance
     }
 
     private fun calculateIntersectionAngle(dx: Double, dy: Double): Double {
-        return atan2(dy, dx).let { if (it < 0) 2 * PI - it else it }
+        return atan2(dy, dx).let { if (it < 0) 2 * PI + it else it }
     }
 
     private fun tryCalculateChargeIntersection(point: Vector, direction: Double): Boolean {

@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import com.damhoe.fieldlines.app.Vector
 import com.damhoe.fieldlines.charges.application.PointChargeDialogBuilder
+import com.damhoe.fieldlines.charges.domain.PointCharge
 import com.example.fieldlines.R
 import com.example.fieldlines.databinding.DialogSettingsBinding
 import com.example.fieldlines.databinding.FragmentFieldBinding
@@ -188,6 +189,26 @@ class FieldFragment : Fragment() {
                             .setAction("OK") {  }
                             .show()
                     }
+            }
+            .setNegativeButton("Cancel") { d, _ -> d.cancel() }
+            .create().show()
+    }
+
+    fun showEditChargeDialog(position: Int, pointCharge: PointCharge) {
+        PointChargeDialogBuilder(requireContext())
+            .setTitle("Edit charge")
+            .setPoint(pointCharge.position)
+            .setCharge(pointCharge.charge)
+            .setPositiveButton("Save") { x, y, charge ->
+                viewModel.updateCharge(position, x, y, charge).onFailure {
+                    Snackbar.make(
+                        binding.root,
+                        "Failed: ${it.message}",
+                        Snackbar.LENGTH_SHORT
+                    )
+                        .setAction("OK") {  }
+                        .show()
+                }
             }
             .setNegativeButton("Cancel") { d, _ -> d.cancel() }
             .create().show()

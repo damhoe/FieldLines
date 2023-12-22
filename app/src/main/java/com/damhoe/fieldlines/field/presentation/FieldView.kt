@@ -97,7 +97,7 @@ class FieldView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val scaleListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         val damping: Float = 1.0f
-        val minViewportWidthRadius: Float = 0.011f
+        val minViewportWidthRadius: Float = 0.11f
         val maxViewportWidthRadius: Float = 11_000f
         var minWidth: Float = 2 * minViewportWidthRadius
         var maxWidth: Float = 2 * maxViewportWidthRadius
@@ -190,6 +190,26 @@ class FieldView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             return true
         }
 
+        override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
+
+            val point: Vector = transformation.run {
+                val x = toRealX(event.x).roundToInt().toDouble()
+                val y = toRealY(event.y).roundToInt().toDouble()
+                Vector(x, y)
+            }
+
+            // Check if any charge is close to the location
+            findCloseChargePosition(point)
+                .takeIf { it >= 0 } // If a charge was found
+                ?.let {
+                    // Open edit charge dialog if charge is selected
+                    val charge = field.pointCharges[it]
+                    (findFragment() as FieldFragment).showEditChargeDialog(it, charge)
+                }
+
+            return true
+        }
+
         override fun onLongPress(event: MotionEvent) {
             val point: Vector = transformation.run {
                 val x = toRealX(event.x).roundToInt().toDouble()
@@ -236,6 +256,22 @@ class FieldView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             height = h
             resetZoom(defaultViewportRadius)
         }
+    }
+
+    private fun findCloseChargePosition(point: Vector): Int {
+        field.pointCharges.forEachIndexed { i, charge ->
+            if (isNearTap(point, charge.position)) {
+                return i
+            }
+        }
+
+        return -1
+    }
+
+    private fun isNearTap(tapPoint: Vector, anchor: Vector): Boolean {
+        val dx = tapPoint.x - anchor.x
+        val dy = tapPoint.y - anchor.y
+        return dx * dx + dy * dy < 5.0e1 / (transformation.ratioX * transformation.ratioX)
     }
 
     override fun onDraw(canvas: Canvas) {
