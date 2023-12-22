@@ -193,8 +193,8 @@ class FieldView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
 
             val point: Vector = transformation.run {
-                val x = toRealX(event.x).roundToInt().toDouble()
-                val y = toRealY(event.y).roundToInt().toDouble()
+                val x = toRealX(event.x)
+                val y = toRealY(event.y)
                 Vector(x, y)
             }
 
@@ -271,7 +271,7 @@ class FieldView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private fun isNearTap(tapPoint: Vector, anchor: Vector): Boolean {
         val dx = tapPoint.x - anchor.x
         val dy = tapPoint.y - anchor.y
-        return dx * dx + dy * dy < 5.0e1 / (transformation.ratioX * transformation.ratioX)
+        return dx * dx + dy * dy < 2.5e3 * transformation.ratioX * transformation.ratioX
     }
 
     override fun onDraw(canvas: Canvas) {
